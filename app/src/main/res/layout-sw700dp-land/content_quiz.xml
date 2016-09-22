@@ -9,13 +9,15 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:name="edu.orangecoastcollege.cs273.kfrederick5.flagquiz.SettingsActivityFragment"
-        android:id="@+id/fragment2"
-        android:layout_weight="1"/>
+        android:id="@+id/settingsFragment"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:name="edu.orangecoastcollege.cs273.kfrederick5.flagquiz.QuizActivityFragment"
-        android:id="@+id/fragment3"
-        android:layout_weight="2"/>
+        android:id="@+id/quizFragment"
+        android:layout_weight="2"
+        tools:layout="@layout/fragment_quiz" />
 </LinearLayout>
