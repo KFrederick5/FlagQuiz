@@ -222,7 +222,7 @@ public class QuizActivityFragment extends Fragment {
                 column < guessLinearLayouts[row].getChildCount(); column++) {
                 //get reference to Button to configure
                 Button newGuessButton = (Button) guessLinearLayouts[row].getChildAt(column);
-                newGuessButton.getEnabled(true);
+                newGuessButton.setEnabled(true);
 
                 //get country name and set it as newGuessButton's text
                 String filename = fileNameList.get((row * 2) + column);
@@ -251,7 +251,7 @@ public class QuizActivityFragment extends Fragment {
             ++totalGuesses; //increment number of guesses the user has made
 
             if(guess.equals(answer)) { //if the guess is correct
-                ++correctAnswer; // increment the number of correct answers
+                ++correctAnswers; // increment the number of correct answers
 
                 //display correct answer in green text
                 answerTextView.setText(answer + "!");
