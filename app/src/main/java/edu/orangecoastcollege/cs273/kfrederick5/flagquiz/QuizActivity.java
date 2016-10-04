@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Set;
 
@@ -29,11 +22,6 @@ public class QuizActivity extends AppCompatActivity {
 
     private boolean phoneDevice = true; // Used to force portrait mode
     private boolean preferencesChanged = true; // did preferences change?
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient mClient;
 
 
     /**
@@ -89,7 +77,7 @@ public class QuizActivity extends AppCompatActivity {
             // now that the default preferences have been set,
             //initialize QuizActivityFragment and start the quiz
             QuizActivityFragment quizFragment = (QuizActivityFragment)
-                    getSupportFragmentManager().findFragmentById(R.id.quizFragment);
+                    getFragmentManager().findFragmentById(R.id.quizFragment);
             quizFragment.updateGuessRows(
                     PreferenceManager.getDefaultSharedPreferences(this));
             quizFragment.updateRegions(
@@ -141,8 +129,8 @@ public class QuizActivity extends AppCompatActivity {
      * new settings.
      */
 
-    private OnSharedPreferenceChangeListener preferencesChangeListener =
-            new OnSharedPreferenceChangeListener() {
+    private SharedPreferences.OnSharedPreferenceChangeListener preferencesChangeListener =
+            new SharedPreferences.OnSharedPreferenceChangeListener() {
 
                 //called when the user changes the app's preferences
                 @Override
@@ -151,7 +139,7 @@ public class QuizActivity extends AppCompatActivity {
                     preferencesChanged = true; //user changed app setting
 
                     QuizActivityFragment quizFragment = (QuizActivityFragment)
-                            getSupportFragmentManager().findFragmentById(
+                            getFragmentManager().findFragmentById(
                                     R.id.quizFragment);
 
                     if (key.equals(CHOICES)) { // # of choices to display changed

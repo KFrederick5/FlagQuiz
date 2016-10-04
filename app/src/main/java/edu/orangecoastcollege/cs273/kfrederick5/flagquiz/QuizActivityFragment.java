@@ -8,8 +8,8 @@ import android.content.res.AssetManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -241,7 +241,7 @@ public class QuizActivityFragment extends Fragment {
      * Called when a guess button is clicked. This listener is used for all buttons
      * in the flag quiz.
      */
-    private OnClickListener guessButtonListener = new OnClickListener() {
+    private View.OnClickListener guessButtonListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Button guessButton = ((Button) v);
