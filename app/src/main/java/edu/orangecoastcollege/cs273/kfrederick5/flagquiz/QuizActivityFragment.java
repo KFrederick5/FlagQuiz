@@ -53,16 +53,13 @@ public class QuizActivityFragment extends Fragment {
     private LinearLayout[] guessLinearLayouts; // rows of answer Buttons
     private TextView answerTextView; // displays correct answer
 
-    public QuizActivityFragment() {
-    }
-
     /**
      * Configures the QuizActivityFragment when its View is created.
      *
      * @param inflater The layout inflater
      * @param container The view group contain in which the fragment resides
      * @param savedInstanceState Any saved state to restore in this fragment
-     * @return
+     * @return returns the view for display
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,7 +113,7 @@ public class QuizActivityFragment extends Fragment {
                 sharedPreferences.getString(QuizActivity.CHOICES, null);
         guessRows = Integer.parseInt(choices) / 2;
 
-        //hide all guess button LinearLayours
+        //hide all guess button LinearLayouts
         for (LinearLayout layout: guessLinearLayouts)
             layout.setVisibility(View.GONE);
 
@@ -194,7 +191,7 @@ public class QuizActivityFragment extends Fragment {
         //extract the region from the next image's name
         String region = nextImage.substring(0, nextImage.indexOf('-'));
 
-        //use assestManager to load next image from assets folder
+        //use assetManager to load next image from assets folder
         AssetManager assets = getActivity().getAssets();
 
         //get an InputStream to the asset representing the next flag
@@ -219,9 +216,11 @@ public class QuizActivityFragment extends Fragment {
         for (int row = 0; row < guessRows; row++){
             //place Buttons in currentTableRow
             for(int column = 0;
-                column < guessLinearLayouts[row].getChildCount(); column++) {
+                column < guessLinearLayouts[row].getChildCount();
+                column++) {
                 //get reference to Button to configure
-                Button newGuessButton = (Button) guessLinearLayouts[row].getChildAt(column);
+                Button newGuessButton =
+                        (Button) guessLinearLayouts[row].getChildAt(column);
                 newGuessButton.setEnabled(true);
 
                 //get country name and set it as newGuessButton's text
@@ -242,7 +241,7 @@ public class QuizActivityFragment extends Fragment {
      * Called when a guess button is clicked. This listener is used for all buttons
      * in the flag quiz.
      */
-    private View.OnClickListener guessButtonListener = new View.OnClickListener() {
+    private OnClickListener guessButtonListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Button guessButton = ((Button) v);
@@ -250,7 +249,7 @@ public class QuizActivityFragment extends Fragment {
             String answer = getCountryName(correctAnswer);
             ++totalGuesses; //increment number of guesses the user has made
 
-            if(guess.equals(answer)) { //if the guess is correct
+            if (guess.equals(answer)) { //if the guess is correct
                 ++correctAnswers; // increment the number of correct answers
 
                 //display correct answer in green text
@@ -286,9 +285,43 @@ public class QuizActivityFragment extends Fragment {
                             return builder.create(); // return the AlertDialog
                         }
                     };
+
+                    //use FragmentManager to display DialogFragment
+                    quizResults.setCancelable(false);
+                    quizResults.show(getFragmentManager(), "quiz results");
                 }
+                else { // answer is correct but quiz isn't over
+                    //load the next flag after a 2-second delay
+                    handler.postDelayed(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    loadNextFlag();
+                                }
+                            }, 2000); // 2000 milliseconds for 2-second delay
+                }
+            } else {//answer incorrect
+
+                //display "Incorrect!" in red
+                answerTextView.setText(R.string.incorrect_answer);
+                answerTextView.setTextColor(getResources().getColor(
+                        R.color.incorrect_answer, getContext().getTheme()));
+                guessButton.setEnabled(false); //disable incorrect answer
             }
         }
     };
+
+private String getCountryName(String name) {
+    String countryName = name.substring(name.indexOf('-') + 1);
+    return countryName.replace('_', ' ');
+}
+
+    private void disableButtons() {
+        for(int row = 0; row < guessRows; row++) {
+            LinearLayout guessRow = guessLinearLayouts[row];
+            for(int i = 0; i < guessRow.getChildCount(); i++)
+                guessRow.getChildAt(i).setEnabled(false);
+        }
+    }
 }
 

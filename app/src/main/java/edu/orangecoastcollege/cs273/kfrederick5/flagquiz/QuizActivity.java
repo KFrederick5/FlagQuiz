@@ -4,13 +4,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-import android.widget.Toolbar;
+
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Set;
 
@@ -22,6 +29,11 @@ public class QuizActivity extends AppCompatActivity {
 
     private boolean phoneDevice = true; // Used to force portrait mode
     private boolean preferencesChanged = true; // did preferences change?
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient mClient;
 
 
     /**
@@ -29,8 +41,9 @@ public class QuizActivity extends AppCompatActivity {
      * If the device is large or XL, it will load the content_main.xml (sw700dp-land) which
      * includes both the fragment_quiz.xml and fragment_settings.xml. Otherwise, it just
      * inflates the standard content_main.xml with the fragment_quiz.
-     *
+     * <p>
      * All default preferences are set using the preferences.xml file.
+     *
      * @param savedInstanceState The saved state to restore (not being used)
      */
 
@@ -42,7 +55,7 @@ public class QuizActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // set default values in the app's SharedPreferences
-        PreferenceManager.setDefaultValues(this,R.xml.preferences, false);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         // register listener for SharedPreferences changes
         PreferenceManager.getDefaultSharedPreferences(this).
@@ -58,7 +71,7 @@ public class QuizActivity extends AppCompatActivity {
             phoneDevice = false; // not a phone-sized device
 
         //if running on phone-sized device, allow only portrait orientation
-        if(phoneDevice)
+        if (phoneDevice)
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
     }
 
@@ -69,10 +82,10 @@ public class QuizActivity extends AppCompatActivity {
      */
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
 
-        if(preferencesChanged){
+        if (preferencesChanged) {
             // now that the default preferences have been set,
             //initialize QuizActivityFragment and start the quiz
             QuizActivityFragment quizFragment = (QuizActivityFragment)
@@ -91,7 +104,7 @@ public class QuizActivity extends AppCompatActivity {
      * Shows the settings menu if the app is running on a phone or a portrait-oriented
      * tablet only. (Large screen sizes include the settings fragment in the layout)
      *
-     * @param menu The sttings menu.
+     * @param menu The settings menu.
      * @return True if the sttings menu was inflated, false otherwise.
      */
     @Override
@@ -99,11 +112,10 @@ public class QuizActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         int orientation = getResources().getConfiguration().orientation;
 
-        if(orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             getMenuInflater().inflate(R.menu.menu_quiz, menu);
             return true;
-        }
-        else
+        } else
             return false;
     }
 
@@ -124,13 +136,13 @@ public class QuizActivity extends AppCompatActivity {
 
     /**
      * Listener to handle changes in the app's shared preferences (preferences.xml).
-     *
+     * <p>
      * If either the guess options or regions are changed, the quiz will restart with the
      * new settings.
      */
 
-    private SharedPreferences.OnSharedPreferenceChangeListener preferencesChangeListener =
-            new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private OnSharedPreferenceChangeListener preferencesChangeListener =
+            new OnSharedPreferenceChangeListener() {
 
                 //called when the user changes the app's preferences
                 @Override
@@ -145,15 +157,15 @@ public class QuizActivity extends AppCompatActivity {
                     if (key.equals(CHOICES)) { // # of choices to display changed
                         quizFragment.updateGuessRows(sharedPreferences);
                         quizFragment.resetQuiz();
-                    }
-                    else if (key.equals(REGIONS)) {// regions to include changed
+                    } else if (key.equals(REGIONS)) {// regions to include changed
                         Set<String> regions =
                                 sharedPreferences.getStringSet(REGIONS, null);
 
                         if (regions != null && regions.size() > 0) {
                             quizFragment.updateRegions(sharedPreferences);
                             quizFragment.resetQuiz();
-                        } else {
+                        }
+                        else {
                             //must select one region--set North America as default
                             SharedPreferences.Editor editor =
                                     sharedPreferences.edit();
@@ -166,7 +178,10 @@ public class QuizActivity extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
+
+                    Toast.makeText(QuizActivity.this,
+                            R.string.restarting_quiz,
+                            Toast.LENGTH_SHORT).show();
                 }
             };
-
 }
